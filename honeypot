@@ -10,7 +10,6 @@ install_cowrie () {
 	apt-get update
 	apt-get install iptables
 	apt-get install git
-	git clone http://github.com/cowrie/cowrie
 	cd cowrie
 }
 
@@ -21,6 +20,7 @@ exist() {
 		exit
 	fi
 	cd /home/raspberry/honeypot
+	git clone http://github.com/cowrie/cowrie
 }
 
 setup_envi () {
@@ -45,27 +45,6 @@ start_cowrie () {
 	bin/cowrie start
 }
 
-
-usage () {
-	echo "Usage:"
-	echo "./honeypot [-i]"
-	echo ""
-  echo "-i        Install."
-}
-
-while [[ $# -gt 0 ]]
-do
-	DISPLAY_USAGE="false"
-	key="$1"
-
-	case $key in
- 		-i|--install)
-			echo "Install..."
-			check_os
-			install_depend
-			install_honeypot
-	esac
-done
 
 if [ "$DISPLAY_USAGE" = true ]
 then
