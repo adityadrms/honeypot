@@ -1,0 +1,88 @@
+#!/bin/bash
+
+DISPLAY_USAGE="true"
+
+install_deps () {
+	sudo apt-get update
+	sudo apt-get iptables
+	sudo apt install git
+
+	wget https://github.com/foospidy/clilib/archive/master.zip
+	unzip -o master.zip
+	cd clilib-master
+	python setup.py bdist_egg
+	easy_install -Z dist/clilib-0.0.1-py2.7.egg
+}
+
+check_os () {
+	# check for debian and debian version
+	if [ ! -f "/etc/debian_version" ]
+	then
+	 	echo "No debian_version file present, is this Debian?"
+		exit
+	fi
+}
+
+create_user () {
+	echo "Creating user account..."
+	adduser cowrie --disabled-password cowrie
+	sudo su - cowrie
+}
+
+set_permissions () {
+	chown -R raspberry:raspberry /home/raspberry/honeypot
+}
+		
+install_honeypy() {
+	sudo git clone http://github.com/cowrie/cowrie
+	cd cowrie
+
+	if [ -d "/home/raspberry/honeypot" ]
+	then
+		echo "/home/raspberry/honeypot already exists. Remove it and rerun install"
+		exit
+	fi
+
+	cd /home/raspberry
+}
+
+
+
+usage () {
+	echo "Usage:"
+	echo "./honey [-i]"
+	echo ""
+        echo "-i        Install everything."
+        echo "-p        Set/change HoneyPy service profile."
+}
+
+while [[ $# -gt 0 ]]
+do
+	DISPLAY_USAGE="false"
+	key="$1"
+
+	case $key in
+ 		-i|--install)
+			echo "Install..."
+			check_os
+			install_deps
+			create_user
+			install_honeypy
+			set_profile
+			install_iptkit
+			shift
+			;;
+	
+	    	*)
+			usage
+			shift
+	    		;;
+	esac
+done
+
+if [ "$DISPLAY_USAGE" = true ]
+then
+	usage
+fi
+
+exit
