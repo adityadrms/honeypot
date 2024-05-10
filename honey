@@ -33,15 +33,10 @@ set_permissions () {
 	chown -R raspberry:raspberry /home/raspberry/honeypot
 }
 		
-install_honeypy() {
+install_honey() {
 	sudo git clone http://github.com/cowrie/cowrie
 	cd cowrie
-
-	if [ -d "/home/raspberry/honeypot" ]
-	then
-		echo "/home/raspberry/honeypot already exists. Remove it and rerun install"
-		exit
-	fi
+	chmod -R 777 cowrie
 
 	cd /home/raspberry
 }
@@ -67,7 +62,7 @@ do
 			check_os
 			install_deps
 			create_user
-			install_honeypy
+			install_honey
 			set_profile
 			install_iptkit
 			shift
