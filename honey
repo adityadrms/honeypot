@@ -7,11 +7,6 @@ install_deps () {
 	sudo apt-get iptables
 	sudo apt install git
 
-	wget https://github.com/foospidy/clilib/archive/master.zip
-	unzip -o master.zip
-	cd clilib-master
-	python setup.py bdist_egg
-	easy_install -Z dist/clilib-0.0.1-py2.7.egg
 }
 
 check_os () {
@@ -48,7 +43,7 @@ usage () {
 	echo "./honey [-i]"
 	echo ""
         echo "-i        Install everything."
-        echo "-p        Set/change HoneyPy service profile."
+       
 }
 
 while [[ $# -gt 0 ]]
@@ -63,8 +58,6 @@ do
 			install_deps
 			create_user
 			install_honey
-			set_profile
-			install_iptkit
 			shift
 			;;
 	
