@@ -1,15 +1,17 @@
-#!/bin/bash
+import paramiko
 
-# Fungsi untuk mengeksekusi perintah SSH
-execute_ssh_command() {
-    sshpass -p "$2" ssh -o StrictHostKeyChecking=no "$1"@"$3" "$4"
-}
+hostname = 192.168.134.35
+username = raspberry
+password = 123
 
-# Variabel konfigurasi SSH
-USERNAME="raspberry"
-PASSWORD="123"
-HOST="192.16.134.35"
-COMMAND="ls -l"
+ssh_client = paramiko.SSHClient()
+ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-# Panggil fungsi untuk mengeksekusi perintah SSH
-execute_ssh_command "$USERNAME" "$PASSWORD" "$HOST" "$COMMAND"
+ssh_client.connect(hostname, username=username, password=password)
+
+stdin, stdout, stderr = ssh_client.exec_command('ls -l')
+
+output = stdout.read().decode()
+print(output)
+
+ssh_client.close()
