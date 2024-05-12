@@ -4,7 +4,7 @@ DISPLAY_USAGE="true"
 
 install_deps () {
 	sudo apt-get update
-	sudo apt-get iptables
+	sudo apt install iptables
 	sudo apt install git
 
 }
@@ -32,8 +32,7 @@ install_honey() {
 	sudo git clone http://github.com/cowrie/cowrie
 	cd cowrie
 	chmod -R 777 cowrie
-
-	cd /home/raspberry
+	python -m venv cowrie-env
 }
 
 
@@ -54,10 +53,11 @@ do
 	case $key in
  		-i|--install)
 			echo "Install..."
-			check_os
 			install_deps
+			check_os
 			create_user
 			install_honey
+			set_permissions
 			shift
 			;;
 	
