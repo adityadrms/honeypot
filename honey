@@ -1,76 +1,33 @@
 #!/bin/bash
 
-DISPLAY_USAGE="true"
+# Cowrie Installation and Running Script
 
-install_deps () {
-	sudo apt-get update
-	sudo apt install iptables
-	sudo apt install git
+# Update system
+echo "Updating system..."
+sudo apt update && sudo apt upgrade -y
 
-}
+# Install dependencies
+echo "Installing dependencies..."
+sudo apt install -y git python3-virtualenv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind
 
-check_os () {
-	# check for debian and debian version
-	if [ ! -f "/etc/debian_version" ]
-	then
-	 	echo "No debian_version file present, is this Debian?"
-		exit
-	fi
-}
+# Create a dedicated user for Cowrie
+sudo adduser --disabled-password --gecos "" cowrie
 
-create_user () {
-	echo "Creating user account..."
-	adduser cowrie --disabled-password cowrie
-	sudo su - cowrie
-}
+# Switch to the cowrie user
+sudo -u cowrie -H sh -c 'cd ~ && git clone http://github.com/cowrie/cowrie'
 
-set_permissions () {
-	chown -R raspberry:raspberry /home/raspberry/honeypot
-}
-		
-install_honey() {
-	sudo git clone http://github.com/cowrie/cowrie
-	cd cowrie
-	chmod -R 777 cowrie
-	python -m venv cowrie-env
-}
+# Create virtual environment
+sudo -u cowrie -H sh -c 'cd ~/cowrie && python3 -m venv cowrie-env'
 
+# Activate virtual environment
+sudo -u cowrie -H sh -c 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && pip install --upgrade pip'
 
+# Install Cowrie
+sudo -u cowrie -H sh -c 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && pip install -r requirements.txt'
 
-usage () {
-	echo "Usage:"
-	echo "./honey [-i]"
-	echo ""
-        echo "-i        Install everything."
-       
-}
+# Configure Cowrie
+sudo -u cowrie -H sh -c 'cp ~/cowrie/cowrie.cfg.dist ~/cowrie/cowrie.cfg'
 
-while [[ $# -gt 0 ]]
-do
-	DISPLAY_USAGE="false"
-	key="$1"
-
-	case $key in
- 		-i|--install)
-			echo "Install..."
-			install_deps
-			check_os
-			create_user
-			install_honey
-			set_permissions
-			shift
-			;;
-	
-	    	*)
-			usage
-			shift
-	    		;;
-	esac
-done
-
-if [ "$DISPLAY_USAGE" = true ]
-then
-	usage
-fi
-
-exit
+# Start Cowrie with logging
+echo "Starting Cowrie with logging..."
+sudo -u cowrie -H sh -c 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && ./start.sh -l ~/cowrie/cowrie.log'
