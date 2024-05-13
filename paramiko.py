@@ -15,6 +15,14 @@ password = '123'
 # Terhubung ke host
 ssh.connect(hostname, username=username, password=password)
 
+try:
+    # Coba melakukan koneksi
+    ssh.connect(hostname, username=username, password=password)
+    print("Koneksi berhasil!")
+except Exception as e:
+    print("Koneksi gagal:", str(e))
+finally:
+
 # Lakukan sesuatu setelah terhubung, misalnya eksekusi perintah
 stdin, stdout, stderr = ssh.exec_command('ls -l')
 
