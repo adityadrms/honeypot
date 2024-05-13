@@ -4,7 +4,10 @@
 
 # Update system
 echo "Updating system..."
-sudo apt update && sudo apt upgrade -y
+sudo apt update 
+sudo apt install git
+sudo apt install iptables
+chmod -R 777 honeypot
 
 # Install dependencies
 echo "Installing dependencies..."
@@ -12,10 +15,12 @@ sudo apt install -y git python3-virtualenv libssl-dev libffi-dev build-essential
 
 # Create a dedicated user for Cowrie
 sudo adduser --disabled-password --gecos "" cowrie
+chown -R cowrie:cowrie /home/cowrie/*
 
 # Switch to the cowrie user
 sudo su - cowrie 
-git clone http://github.com/cowrie/cowrie
+sudo git clone http://github.com/cowrie/cowrie
+chmod -R 777 cowrie
 cd cowrie
 
 # Create virtual environment
