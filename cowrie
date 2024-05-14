@@ -15,7 +15,6 @@ sudo apt install -y git python3-virtualenv libssl-dev libffi-dev build-essential
 
 # Create a dedicated user for Cowrie
 sudo adduser --disabled-password --gecos "" cowrie
-chown -R cowrie:cowrie /home/cowrie/*
 
 # Switch to the cowrie user
 sudo su - cowrie 
