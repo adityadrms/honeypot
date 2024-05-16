@@ -1,41 +1,57 @@
 #!/bin/bash
 
 # Update the system
-echo "Updating system..."
-sudo apt-get update -y
-sudo apt install iptables -y
+sudo apt update -y
 
 # Install dependencies
-echo "Installing dependencies..."
-sudo apt-get install -y git python3-virtualenv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind virtualenv
+sudo apt-get install git python3-virtualenv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind virtualenv
 
-# Create a user for Cowrie
-echo "Creating a user for Cowrie..."
-sudo adduser --disabled-password --gecos "" cowrie /home
+# Create a user for Cowrie if not exists
+if ! id -u cowrie >/dev/null 2>&1; then
+    sudo adduser --disabled-password --gecos "" cowrie
+fi
 
 # Clone the Cowrie repository
-echo "Cloning the Cowrie repository..."
-sudo -u -E cowrie git clone https://github.com/cowrie/cowrie 
+sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie
 
 # Navigate to the Cowrie directory
-cd cowrie
+cd /home/cowrie/cowrie || exit
 
 # Create a virtual environment
-echo "Creating a virtual environment..."
-sudo -u -E cowrie python -m venv cowrie-env
+sudo -u cowrie python -m venv cowrie-env
 
 # Activate the virtual environment
-sudo -u -E source cowrie-env/bin/activate
+source cowrie-env/bin/activate
 
 # Install the necessary Python packages
-echo "Installing Python packages..."
-sudo -u -E cowrie python -m pip install --upgrade pip
-sudo -u -E cowrie python -m pip install --upgrade -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install --upgrade -r requirements.txt
 
 # Copy the configuration file and edit it
-echo "Setting up configuration..."
-sudo -u -E cowrie cp etc/cowrie.cfg.dist etc/cowrie.cfg
+cp etc/cowrie.cfg.dist etc/cowrie.cfg
 
-# Start cowrie
-bin/cowrie start
+# (Optional) You can edit the cowrie.cfg file here using sed or any other method if you need to automate specific configuration changes
+
+# Deactivate the virtual environment
+deactivate
+
+# Create a systemd service file for Cowrie
+sudo bash -c 'cat <<EOF > /etc/systemd/system/cowrie.service
+[Unit]
+Description=Cowrie SSH Honeypot
+After=network.target
+
+[Service]
+Type=simple
+User=cowrie
+WorkingDirectory=/home/cowrie/cowrie
+ExecStart=/home/cowrie/cowrie/cowrie-env/bin/python3 /home/cowrie/cowrie/src/cowrie
+Restart=always
+StandardOutput=file:/var/log/cowrie/cowrie.log
+StandardError=file:/var/log/cowrie/cowrie.err
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+
 echo "Cowrie honeypot installation and setup complete!"
