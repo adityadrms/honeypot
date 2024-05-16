@@ -3,6 +3,7 @@
 # Update the system
 echo "Updating system..."
 sudo apt-get update
+sudo apt install iptables
 
 # Install dependencies
 echo "Installing dependencies..."
@@ -18,24 +19,24 @@ sudo su - cowrie << 'EOF'
 
 # Clone the Cowrie repository
 echo "Cloning the Cowrie repository..."
-cgit clone https://github.com/cowrie/cowrie
+sudo git clone https://github.com/cowrie/cowrie
 
 # Navigate to the Cowrie directory
 cd cowrie
 
 # Create a virtual environment
 echo "Creating a virtual environment..."
-python3 -m venv cowrie-env
+python -m venv cowrie-env
 
 # Activate the virtual environment
 source cowrie-env/bin/activate
 
 # Install the necessary Python packages
 echo "Installing Python packages..."
-pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install --upgrade -r requirements.txt
 
 # Copy the configuration file and edit it
 echo "Setting up configuration..."
-cp etc/cowrie.cfg.dist etc/cowrie.cfg
+sudo cp etc/cowrie.cfg.dist etc/cowrie.cfg
 bin/cowrie start
