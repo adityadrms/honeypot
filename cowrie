@@ -18,24 +18,24 @@ sudo su - cowrie << 'EOF'
 
 # Clone the Cowrie repository
 echo "Cloning the Cowrie repository..."
-sudo -u cowrie git clone https://github.com/cowrie/cowrie
+cgit clone https://github.com/cowrie/cowrie
 
 # Navigate to the Cowrie directory
-sudo -u cowrie cd cowrie
+cd cowrie
 
 # Create a virtual environment
 echo "Creating a virtual environment..."
-sudo -u cowrie python3 -m venv cowrie-env
+python3 -m venv cowrie-env
 
 # Activate the virtual environment
-sudo -u cowrie source cowrie-env/bin/activate
+source cowrie-env/bin/activate
 
 # Install the necessary Python packages
 echo "Installing Python packages..."
-sudo -u cowrie pip install --upgrade pip
-sudo -u cowrie pip install -r requirements.txt
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # Copy the configuration file and edit it
 echo "Setting up configuration..."
-sudo -u cowrie cp etc/cowrie.cfg.dist etc/cowrie.cfg
-sudo -u cowrie bin/cowrie start
+cp etc/cowrie.cfg.dist etc/cowrie.cfg
+bin/cowrie start
