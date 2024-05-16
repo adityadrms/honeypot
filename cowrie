@@ -11,14 +11,16 @@ sudo apt-get install -y git python3 python3-venv python3-dev libssl-dev libffi-d
 
 # Create a user for Cowrie
 echo "Creating a user for Cowrie..."
-sudo adduser --disabled-password --gecos "" cowrie
+sudo adduser --disabled-password --gecos "" cowrie /home
+sudo su cowrie 
 
 # Clone the Cowrie repository
 echo "Cloning the Cowrie repository..."
-sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie
+sudo -u cowrie git clone https://github.com/cowrie/cowrie 
 
 # Navigate to the Cowrie directory
-cd /home/cowrie/cowrie
+cd 
+cd cowrie
 
 # Create a virtual environment
 echo "Creating a virtual environment..."
