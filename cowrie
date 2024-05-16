@@ -1,39 +1,75 @@
 #!/bin/bash
 
-# Cowrie Installation Script
+# Cowrie Honeypot Automatic Installation Script
+# Tested on Ubuntu 20.04 LTS
 
-# Update system
-echo "Updating system..."
+# Update and upgrade system packages
+echo "Updating and upgrading system packages..."
 sudo apt update 
-sudo apt install git
-sudo apt install iptables
-chmod -R 777 honeypot
 
-# Install dependencies
+# Install necessary dependencies
 echo "Installing dependencies..."
-sudo apt install -y git python3-virtualenv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind
+sudo apt install -y python3 python3-venv python3-dev python3-pip libssl-dev libffi-dev build-essential git
 
-# Create a dedicated user for Cowrie
-sudo adduser --disabled-password --gecos "" cowrie
+# Create cowrie user
+echo "Creating cowrie user..."
+sudo useradd -r -s /bin/bash -d /home/cowrie -m cowrie
 
-# Switch to the cowrie user
-sudo su - cowrie 
-sudo git clone http://github.com/cowrie/cowrie
-chmod -R 777 cowrie
-cd cowrie
+# Switch to cowrie user and set up environment
+echo "Switching to cowrie user..."
+sudo -u cowrie -i <<'EOF'
 
-# Create virtual environment
-python -m venv cowrie-env
+# Create a directory for Cowrie
+echo "Creating directory for Cowrie..."
+mkdir -p ~/cowrie
+cd ~/cowrie
 
-# Activate virtual environment
-source cowrie-env/bin/activate 
-python -m pip install --upgrade pip
-python -m pip install --upgrade -r requirements.txt
+# Clone the Cowrie repository
+echo "Cloning Cowrie repository..."
+git clone https://github.com/cowrie/cowrie.git .
 
+# Set up a Python virtual environment
+echo "Setting up Python virtual environment..."
+python3 -m venv cowrie-env
+source cowrie-env/bin/activate
+
+# Install Python dependencies for Cowrie
+echo "Installing Python dependencies..."
+pip install --upgrade pip
+pip install --upgrade -r requirements.txt
 
 # Configure Cowrie
-sudo cp cowrie.cfg.dist cowrie.cfg
+echo "Configuring Cowrie..."
+cp etc/cowrie.cfg.dist etc/cowrie.cfg
 
-# Start Cowrie (can be done manually or via systemd)
-bin/cowrie start
-echo "Cowrie installed successfully. You can start it manually by running: "
+EOF
+
+# Enable Cowrie as a service
+echo "Setting up Cowrie as a service..."
+sudo tee /etc/systemd/system/cowrie.service > /dev/null <<EOL
+[Unit]
+Description=Cowrie SSH Honeypot
+After=network.target
+
+[Service]
+User=cowrie
+ExecStart=/home/cowrie/cowrie/cowrie-env/bin/python /home/cowrie/cowrie/bin/cowrie start
+ExecStop=/home/cowrie/cowrie/cowrie-env/bin/python /home/cowrie/cowrie/bin/cowrie stop
+WorkingDirectory=/home/cowrie/cowrie
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# Reload systemd and start Cowrie service
+echo "Starting Cowrie service..."
+sudo systemctl daemon-reload
+sudo systemctl enable cowrie
+sudo systemctl start cowrie
+
+# Display status of the Cowrie service
+echo "Cowrie installation and setup completed. Service status:"
+sudo systemctl status cowrie
+
+echo "Cowrie honeypot is now running under the 'cowrie' user."
