@@ -7,36 +7,34 @@ sudo apt install iptables -y
 
 # Install dependencies
 echo "Installing dependencies..."
-sudo apt-get install -y git python3 python3-venv python3-dev libssl-dev libffi-dev build-essential libpython3-dev
+sudo apt-get install -y git python3-virtualenv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind virtualenv
 
 # Create a user for Cowrie
 echo "Creating a user for Cowrie..."
 sudo adduser --disabled-password --gecos "" cowrie /home
-sudo su cowrie 
 
 # Clone the Cowrie repository
 echo "Cloning the Cowrie repository..."
-sudo -u cowrie git clone https://github.com/cowrie/cowrie 
+sudo -u -E cowrie git clone https://github.com/cowrie/cowrie 
 
 # Navigate to the Cowrie directory
-cd 
 cd cowrie
 
 # Create a virtual environment
 echo "Creating a virtual environment..."
-sudo -u cowrie python3 -m venv cowrie-env
+sudo -u -E cowrie python -m venv cowrie-env
 
 # Activate the virtual environment
-source cowrie-env/bin/activate
+sudo -u -E source cowrie-env/bin/activate
 
 # Install the necessary Python packages
 echo "Installing Python packages..."
-pip install --upgrade pip
-pip install -r requirements.txt
+sudo -u -E cowrie python -m pip install --upgrade pip
+sudo -u -E cowrie python -m pip install --upgrade -r requirements.txt
 
 # Copy the configuration file and edit it
 echo "Setting up configuration..."
-cp etc/cowrie.cfg.dist etc/cowrie.cfg
+sudo -u -E cowrie cp etc/cowrie.cfg.dist etc/cowrie.cfg
 
 # Start cowrie
 bin/cowrie start
