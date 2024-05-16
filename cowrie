@@ -45,3 +45,4 @@ EOF
 # Enable Cowrie as a service
 echo "Setting up Cowrie as a service..."
 sudo bin/cowrie start
+tail -f cowrie.log /var/log/cowrie
