@@ -19,57 +19,29 @@ sudo useradd -r -s /bin/bash -d /home/cowrie -m cowrie
 echo "Switching to cowrie user..."
 sudo -u cowrie -i <<'EOF'
 
-# Create a directory for Cowrie
-echo "Creating directory for Cowrie..."
-mkdir -p ~/cowrie
-cd ~/cowrie
 
 # Clone the Cowrie repository
 echo "Cloning Cowrie repository..."
-git clone https://github.com/cowrie/cowrie.git .
+sudo git clone https://github.com/cowrie/cowrie.git .
+cd ~/cowrie
 
 # Set up a Python virtual environment
 echo "Setting up Python virtual environment..."
-python3 -m venv cowrie-env
+python -m venv cowrie-env
 source cowrie-env/bin/activate
 
 # Install Python dependencies for Cowrie
 echo "Installing Python dependencies..."
-pip install --upgrade pip
-pip install --upgrade -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install --upgrade -r requirements.txt
 
 # Configure Cowrie
 echo "Configuring Cowrie..."
 cp etc/cowrie.cfg.dist etc/cowrie.cfg
+cd ..
 
 EOF
 
 # Enable Cowrie as a service
 echo "Setting up Cowrie as a service..."
-sudo tee /etc/systemd/system/cowrie.service > /dev/null <<EOL
-[Unit]
-Description=Cowrie SSH Honeypot
-After=network.target
-
-[Service]
-User=cowrie
-ExecStart=/home/cowrie/cowrie/cowrie-env/bin/python /home/cowrie/cowrie/bin/cowrie start
-ExecStop=/home/cowrie/cowrie/cowrie-env/bin/python /home/cowrie/cowrie/bin/cowrie stop
-WorkingDirectory=/home/cowrie/cowrie
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOL
-
-# Reload systemd and start Cowrie service
-echo "Starting Cowrie service..."
-sudo systemctl daemon-reload
-sudo systemctl enable cowrie
-sudo systemctl start cowrie
-
-# Display status of the Cowrie service
-echo "Cowrie installation and setup completed. Service status:"
-sudo systemctl status cowrie
-
-echo "Cowrie honeypot is now running under the 'cowrie' user."
+sudo bin/cowrie start
