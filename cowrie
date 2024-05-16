@@ -22,8 +22,7 @@ sudo -u cowrie -i <<'EOF'
 
 # Clone the Cowrie repository
 echo "Cloning Cowrie repository..."
-sudo git clone https://github.com/cowrie/cowrie.git .
-cd ~/cowrie
+sudo git clone https://github.com/cowrie/cowrie && cd ~/cowrie
 
 # Set up a Python virtual environment
 echo "Setting up Python virtual environment..."
