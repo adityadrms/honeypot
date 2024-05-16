@@ -17,7 +17,7 @@ sudo adduser --disabled-password --gecos "" cowrie
 
 # Switch to cowrie user and set up environment
 echo "Switching to cowrie user..."
-sudo su - cowrie
+sudo -u cowrie -i <<'EOF'
 
 # Navigate to home directory
 cd ~
