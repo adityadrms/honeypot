@@ -10,35 +10,21 @@ sudo apt-get install -y iptables
 sudo adduser --disabled-password --gecos "" cowrie
 
 # Step 3: Switch to the cowrie user
-sudo su - cowrie << 'EOF'
+sudo -u cowrie 
 
 # Step 4: Checkout the Cowrie code
-sudo git clone http://github.com/cowrie/cowrie
-cd cowrie
+sudo git clone http://github.com/cowrie/cowrie && cd cowrie
 
 # Step 5: Setup the Python virtual environment
-python3 -m venv cowrie-env
+python -m venv cowrie-env
 source cowrie-env/bin/activate
 
 # Upgrade pip and install the required Python packages
-pip install --upgrade pip
-pip install --upgrade -r requirements.txt
+python -m pip install --upgrade pip && python -m pip install --upgrade -r requirements.txt
 
 # Step 6: Install configuration file
 cp etc/cowrie.cfg.dist etc/cowrie.cfg
 
 # Step 7: Starting Cowrie (initial run to check setup)
 bin/cowrie start
-bin/cowrie stop
-
-EOF
-
-# Allow the cowrie user to bind to port 22 using authbind
-sudo touch /etc/authbind/byport/22
-sudo chown cowrie:cowrie /etc/authbind/byport/22
-sudo chmod 770 /etc/authbind/byport/22
-
-
-# Step 8: Setup systemd service to start Cowrie automatically
-sudo tee /etc/systemd/system/cowrie.service > /dev/null << EOL
 
