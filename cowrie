@@ -1,57 +1,52 @@
 #!/bin/bash
 
-# Update the system
-sudo apt update -y
+# Update dan upgrade sistem
+sudo apt-get update -y && sudo apt install iptables -y
 
-# Install dependencies
-sudo apt-get install git python3-virtualenv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind virtualenv
+# Install dependensi dasar
+sudo apt-get install -y git python3 python3-venv python3-dev build-essential libssl-dev libffi-dev libpython3-dev libxml2-dev libxslt1-dev zlib1g-dev
 
-# Create a user for Cowrie if not exists
-if ! id -u cowrie >/dev/null 2>&1; then
-    sudo adduser --disabled-password --gecos "" cowrie
+# Membuat user cowrie jika belum ada
+if id "cowrie" &>/dev/null; then
+    echo "User cowrie sudah ada"
+else
+    sudo useradd -m -d /home/cowrie -s /bin/bash --disabled-password --gecos cowrie
+    echo "User cowrie telah dibuat"
 fi
 
-# Clone the Cowrie repository
-sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie
+# Switch ke user cowrie
+sudo -i -u cowrie << 'EOF'
 
-# Navigate to the Cowrie directory
-cd /home/cowrie/cowrie || exit
+# Set direktori home
+cd /home/cowrie
 
-# Create a virtual environment
-sudo -u cowrie python -m venv cowrie-env
+# Clone repository Cowrie
+if [ ! -d "cowrie" ]; then
+    git clone https://github.com/cowrie/cowrie.git
+else
+    echo "Directory cowrie sudah ada"
+fi
 
-# Activate the virtual environment
+cd cowrie
+
+# Membuat virtual environment dan mengaktifkannya
+if [ ! -d "cowrie-env" ]; then
+    python3 -m venv cowrie-env
+fi
 source cowrie-env/bin/activate
 
-# Install the necessary Python packages
-python -m pip install --upgrade pip
-python -m pip install --upgrade -r requirements.txt
+# Menginstall dependensi Cowrie
+pip install --upgrade pip
+pip install -r requirements.txt
 
-# Copy the configuration file and edit it
+# Menyiapkan konfigurasi Cowrie
 cp etc/cowrie.cfg.dist etc/cowrie.cfg
+cp etc/userdb.example.txt etc/userdb.txt
 
-# (Optional) You can edit the cowrie.cfg file here using sed or any other method if you need to automate specific configuration changes
 
-# Deactivate the virtual environment
-deactivate
+# Membuat skrip untuk menjalankan Cowrie
+echo '#!/bin/bash
+source /home/cowrie/cowrie/cowrie-env/bin/activate
 
-# Create a systemd service file for Cowrie
-sudo bash -c 'cat <<EOF > /etc/systemd/system/cowrie.service
-[Unit]
-Description=Cowrie SSH Honeypot
-After=network.target
-
-[Service]
-Type=simple
-User=cowrie
-WorkingDirectory=/home/cowrie/cowrie
-ExecStart=/home/cowrie/cowrie/cowrie-env/bin/python3 /home/cowrie/cowrie/src/cowrie
-Restart=always
-StandardOutput=file:/var/log/cowrie/cowrie.log
-StandardError=file:/var/log/cowrie/cowrie.err
-
-[Install]
-WantedBy=multi-user.target
-EOF'
-
-echo "Cowrie honeypot installation and setup complete!"
+# Membuka log file Cowrie
+tail -f /home/cowrie/cowrie/log/cowrie.log
