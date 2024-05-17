@@ -42,10 +42,6 @@ pip install -r requirements.txt
 
 # Menyiapkan konfigurasi Cowrie
 cp etc/cowrie.cfg.dist etc/cowrie.cfg
-cp etc/userdb.example.txt etc/userdb.txt
-
-# Menonaktifkan virtual environment
-deactivate
 
 EOF
 
@@ -73,8 +69,4 @@ sudo systemctl daemon-reload
 sudo systemctl enable cowrie
 sudo systemctl start cowrie
 
-# Menampilkan status Cowrie
-sudo systemctl status cowrie
 
-# Membuka log file Cowrie
-sudo journalctl -u cowrie -f
