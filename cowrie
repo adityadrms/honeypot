@@ -11,7 +11,7 @@ sudo apt-get install -y git python3 python3-venv python3-dev build-essential lib
 if id "cowrie" &>/dev/null; then
     echo "User cowrie sudah ada"
 else
-    sudo useradd -m -d /home/cowrie -s /bin/bash --disabled-password --gecos cowrie
+    sudo useradd -m -d /home/cowrie -s /bin/bash cowrie
     echo "User cowrie telah dibuat"
 fi
 
