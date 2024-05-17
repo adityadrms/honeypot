@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Update dan upgrade sistem
-sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get update -y
+sudo apt install iptables -y
 
 # Install dependensi dasar
 sudo apt-get install -y git python3 python3-venv python3-dev build-essential libssl-dev libffi-dev libpython3-dev libxml2-dev libxslt1-dev zlib1g-dev
@@ -22,7 +23,7 @@ cd /home/cowrie
 
 # Clone repository Cowrie
 if [ ! -d "cowrie" ]; then
-    git clone https://github.com/cowrie/cowrie.git
+    git clone https://github.com/cowrie/cowrie
 else
     echo "Directory cowrie sudah ada"
 fi
