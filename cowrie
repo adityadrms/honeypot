@@ -21,7 +21,7 @@ sudo -u cowrie -H bash <<EOF
 cd ~
 
 # Clone the Cowrie repository
-git clone https://github.com/cowrie/cowrie.git
+sudo -u cowrie -H git clone https://github.com/cowrie/cowrie.git
 
 # Navigate to the Cowrie directory
 cd cowrie
@@ -37,7 +37,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # Copy default configuration
-cp etc/cowrie.cfg.dist etc/cowrie.cfg
+sudo -u cowrie -H cp etc/cowrie.cfg.dist etc/cowrie.cfg
 EOF
 
 # Configure Cowrie to start with logging
