@@ -29,3 +29,4 @@ ps -u cowrie
 
 # Display message indicating completion
 echo "Cowrie installation and setup complete. Cowrie is now running."
+sudo -u cowrie bash
