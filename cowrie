@@ -17,7 +17,7 @@ sudo adduser --disabled-password --gecos "" cowrie
 
 # Switch to the cowrie user and set up Cowrie
 echo "Setting up Cowrie environment..."
-sudo -u cowrie -H bash <<EOF
+sudo -u cowrie -H bash << 'EOF'
 # Navigate to the home directory
 cd ~
 
@@ -41,17 +41,18 @@ EOF
 
 # Configure Cowrie to start 
 echo "Starting cowrie..."
-sudo -u cowrie -H bash <<EOF
+sudo -u cowrie -H bash << 'EOF'
 source ~/cowrie/cowrie-env/bin/activate
 cd ~/cowrie
-bin/cowrie start
+./bin/cowrie start
 EOF
 
 # Configure log
 echo "Open log..."
-sudo -u cowrie -H bash <<EOF
+sudo -u cowrie -H bash << 'EOF'
 source ~/cowrie/cowrie-env/bin/activate
-tail -f /cowrie/var/log/cowrie/cowrie.log
+cd ~/cowrie/var/log/cowrie
+tail -f cowrie.log
 EOF
 
 # Display message indicating completion
