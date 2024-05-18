@@ -4,7 +4,8 @@
 
 # Update system
 echo "Updating system..."
-sudo apt update 
+sudo apt update -y
+sudo apt install iptables -y
 
 # Install dependencies
 echo "Installing dependencies..."
@@ -14,23 +15,23 @@ sudo apt-get install git python3-virtualenv libssl-dev libffi-dev build-essentia
 sudo adduser --disabled-password --gecos "" cowrie
 
 # Switch to the cowrie user
-sudo -u cowrie -H sh -c 'cd ~ && git clone http://github.com/cowrie/cowrie'
-
-# Go to directory cowrie
-cd ~/cowrie
+sudo -u cowrie -H 'cd ~ && git clone http://github.com/cowrie/cowrie'
 
 # Create virtual environment
-sudo -u cowrie -H sh -c 'cd ~/cowrie && python -m venv cowrie-env'
+sudo -u cowrie -H 'cd ~/cowrie && python -m venv cowrie-env'
 
 # Activate virtual environment
-sudo -u cowrie -H sh -c 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && python -m pip install --upgrade pip'
+sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && python -m pip install --upgrade pip'
 
 # Install Cowrie
-sudo -u cowrie -H sh -c 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && python -m pip install --upgrade -r requirements.txt'
+sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && python -m pip install --upgrade -r requirements.txt'
 
 # Configure Cowrie
-sudo -u cowrie -H sh -c 'cp ~/cowrie/etc/cowrie.cfg.dist ~/cowrie/cowrie.cfg'
+sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cp ~/cowrie/etc/cowrie.cfg.dist ~/cowrie/cowrie.cfg'
 
-# Start Cowrie with logging
+# Start Cowrie
 echo "Starting Cowrie with logging..."
-sudo -u cowrie -H sh -c 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && ./start.sh -l ~/cowrie/cowrie.log'
+sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && bin/cowrie start'
+
+# Open log
+sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie/var/log/cowrie && tail -f cowrie.log'
