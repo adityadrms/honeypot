@@ -44,15 +44,14 @@ echo "Starting cowrie..."
 sudo -u cowrie -H bash <<EOF
 source ~/cowrie/cowrie-env/bin/activate
 cd ~/cowrie
-./bin/cowrie start
+bin/cowrie start
 EOF
 
 # Configure log
 echo "Open log..."
 sudo -u cowrie -H bash <<EOF
 source ~/cowrie/cowrie-env/bin/activate
-cd ~/cowrie/var/log/cowrie
-tail -f cowrie.log
+tail -f /cowrie/var/log/cowrie/cowrie.log
 EOF
 
 # Display message indicating completion
