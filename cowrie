@@ -31,15 +31,13 @@ EOF
 
 # Start Cowrie
 echo "Starting Cowrie..."
-sudo -u cowrie -H bash << 'EOF'
-source ~/cowrie/cowrie-env/bin/activate
-cd ~/cowrie
-./bin/cowrie start
+bin/cowrie start
 EOF
 
 # Show running Cowrie processes
 echo "Displaying Cowrie processes..."
 ps -u cowrie
+
 
 # Display message indicating completion
 echo "Cowrie installation and setup complete. Cowrie is now running."
