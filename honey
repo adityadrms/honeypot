@@ -14,25 +14,9 @@ sudo apt-get install git python3-virtualenv libssl-dev libffi-dev build-essentia
 # Create a dedicated user for Cowrie
 sudo adduser --disabled-password --gecos "" cowrie
 sudo su cowrie
+cd ~/
 
-# Switch to the cowrie user
-sudo -u cowrie -H 'cd ~ && git clone http://github.com/cowrie/cowrie'
+#install
+git clone https://github.com/cowrie/cowrie
+cd cowrie
 
-# Create virtual environment
-sudo -u cowrie -H 'cd ~/cowrie && python -m venv cowrie-env'
-
-# Activate virtual environment
-sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && python -m pip install --upgrade pip'
-
-# Install Cowrie
-sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && python -m pip install --upgrade -r requirements.txt'
-
-# Configure Cowrie
-sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cp ~/cowrie/etc/cowrie.cfg.dist ~/cowrie/cowrie.cfg'
-
-# Start Cowrie
-echo "Starting Cowrie with logging..."
-sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie && bin/cowrie start'
-
-# Open log
-sudo -u cowrie -H 'source ~/cowrie/cowrie-env/bin/activate && cd ~/cowrie/var/log/cowrie && tail -f cowrie.log'
