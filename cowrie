@@ -17,27 +17,22 @@ sudo adduser --disabled-password --gecos "" cowrie
 
 # Switch to the cowrie user and set up Cowrie
 echo "Setting up Cowrie environment..."
-sudo -u cowrie -H sh -c 'cd ~ && git clone https://github.com/cowrie/cowrie'
+sudo -u cowrie -c 'git clone https://github.com/cowrie/cowrie'
+cd /home/cowrie/cowrie
 
 # Create virtual environment and install dependencies
 sudo -u cowrie -H bash << 'EOF'
-cd ~/cowrie
 python3 -m venv cowrie-env
 source cowrie-env/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install --upgrade -r requirements.txt
 cp etc/cowrie.cfg.dist etc/cowrie.cfg
 EOF
 
 # Start Cowrie
 echo "Starting Cowrie..."
+sudo -u cowrie -H bash << 'EOF'
+source cowrie-env/bin/activate
 bin/cowrie start
 EOF
 
-# Show running Cowrie processes
-echo "Displaying Cowrie processes..."
-ps -u cowrie
-
-
-# Display message indicating completion
-echo "Cowrie installation and setup complete. Cowrie is now running."
