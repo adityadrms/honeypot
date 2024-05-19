@@ -37,6 +37,14 @@ source cowrie-env/bin/activate
 bin/cowrie start
 EOF
 
+sudo su /bin/bash << 'EOF'
+cd
+sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
+sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
+sudo touch /etc/authbind/byport/22
+sudo chown cowrie:cowrie /etc/authbind/byport/22
+sudo chmod 770 /etc/authbind/byport/22
+
 # Open Log
 echo "Try to open Log..."
 sudo -u cowrie /bin/bash << 'EOF'
@@ -46,10 +54,4 @@ tail -f cowrie.log
 EOF
 
 
-sudo su /bin/bash << 'EOF'
-cd
-sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
-sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
-sudo touch /etc/authbind/byport/22
-sudo chown cowrie:cowrie /etc/authbind/byport/22
-sudo chmod 770 /etc/authbind/byport/22
+
