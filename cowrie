@@ -6,6 +6,7 @@
 echo "Updating system..."
 sudo apt update -y
 sudo apt install iptables -y
+sudo apt install authbind -y
 
 # Install dependencies
 echo "Installing dependencies..."
@@ -43,3 +44,12 @@ source cowrie-env/bin/activate
 cd /home/cowrie/cowrie/var/log/cowrie
 tail -f cowrie.log
 EOF
+
+
+sudo su /bin/bash << 'EOF'
+cd
+sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
+sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
+sudo touch /etc/authbind/byport/22
+sudo chown cowrie:cowrie /etc/authbind/byport/22
+sudo chmod 770 /etc/authbind/byport/22
