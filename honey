@@ -4,7 +4,9 @@
 
 # Update system
 echo "Updating system..."
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update -y 
+sudo apt install iptables -y
+sudo apt install authbind -y
 
 # Install dependencies
 echo "Installing dependencies..."
