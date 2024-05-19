@@ -21,23 +21,23 @@ echo "Cloning Cowrie repository..."
 sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie
 
 # Change to Cowrie directory
-cd /home/cowrie/cowrie || exit
+cd /home/cowrie/cowrie 
 
 # Set up virtual environment
 echo "Setting up virtual environment..."
-sudo -u cowrie /bin/bash -c 'python3 -m venv cowrie-env'
+sudo -u cowrie -c 'python3 -m venv cowrie-env'
 
 # Activate virtual environment and install dependencies
 echo "Installing Python dependencies..."
-sudo -u cowrie /bin/bash -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && pip install --upgrade pip'
-sudo -u cowrie /bin/bash -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && pip install --upgrade -r /home/cowrie/cowrie/requirements.txt'
+sudo -u cowrie -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && pip install --upgrade pip'
+sudo -u cowrie -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && pip install --upgrade -r /home/cowrie/cowrie/requirements.txt'
 
 # Copy configuration file
 echo "Copying configuration file..."
-sudo -u cowrie /bin/bash -c 'cp /home/cowrie/cowrie/etc/cowrie.cfg.dist /home/cowrie/cowrie/etc/cowrie.cfg'
+sudo -u cowrie -c 'cp /home/cowrie/cowrie/etc/cowrie.cfg.dist /home/cowrie/cowrie/etc/cowrie.cfg'
 
 # Start Cowrie
 echo "Starting Cowrie..."
-sudo -u cowrie /bin/bash -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && /home/cowrie/cowrie/bin/cowrie start'
+sudo -u cowrie -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && /home/cowrie/cowrie/bin/cowrie start'
 
 echo "Cowrie installation and setup completed."
