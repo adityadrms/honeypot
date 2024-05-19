@@ -13,7 +13,7 @@ sudo apt-get install git python3-virtualenv libssl-dev libffi-dev build-essentia
 
 # Create user for Cowrie
 sudo adduser --disabled-password --gecos "" cowrie
-sudo -u cowrie /bin/bash sh -c 'git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie'
+sudo -u cowrie /bin/bash sh -c 'git clone https://github.com/cowrie/cowrie'
 cd /home/cowrie/cowrie
 python -m venv cowrie-env
 
