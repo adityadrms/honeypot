@@ -13,13 +13,13 @@ sudo apt-get install git python3-virtualenv libssl-dev libffi-dev build-essentia
 
 # Create user for Cowrie
 sudo adduser --disabled-password --gecos "" cowrie
-sudo -u cowrie bin/bash sh -c 'git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie'
+sudo -u cowrie /bin/bash sh -c 'git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie'
 cd /home/cowrie/cowrie
 python -m venv cowrie-env
 
-sudo -u cowrie bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && python -m pip install --upgrade pip'
-sudo -u cowrie bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && python -m pip install --upgrade -r requirements.txt'
+sudo -u cowrie /bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && python -m pip install --upgrade pip'
+sudo -u cowrie /bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && python -m pip install --upgrade -r requirements.txt'
 
-sudo -u cowrie bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && cp /home/rcowrie/cowrie/etc/cowrie.cfg.dist etc/cowrie.cfg'
-sudo -u cowrie bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && bin/cowrie start'
+sudo -u cowrie /bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && cp /home/cowrie/cowrie/etc/cowrie.cfg.dist etc/cowrie.cfg'
+sudo -u cowrie /bin/bash sh -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && bin/cowrie start'
 
