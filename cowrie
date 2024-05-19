@@ -36,3 +36,10 @@ source cowrie-env/bin/activate
 bin/cowrie start
 EOF
 
+# Open Log
+echo "Try to open Log..."
+sudo -u cowrie /bin/bash << 'EOF'
+source cowrie-env/bin/activate
+cd /home/cowrie/cowrie/var/log/cowrie
+tail -f cowrie.log
+EOF
