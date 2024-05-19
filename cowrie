@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 # Cowrie Installation and Running Script
 
@@ -44,6 +44,7 @@ sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
 sudo touch /etc/authbind/byport/22
 sudo chown cowrie:cowrie /etc/authbind/byport/22
 sudo chmod 770 /etc/authbind/byport/22
+EOF
 
 # Open Log
 echo "Try to open Log..."
