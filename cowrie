@@ -2,7 +2,7 @@
 
 # Cowrie Installation and Running Script
 
-# Update system
+# Update & Install System
 echo "Updating system..."
 sudo apt update -y
 sudo apt install iptables -y
@@ -12,11 +12,11 @@ sudo apt install authbind -y
 echo "Installing dependencies..."
 sudo apt install -y git python3-venv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind
 
-# Create a dedicated user for Cowrie
+# Create user Cowrie
 echo "Creating cowrie user..."
 sudo adduser --disabled-password --gecos "" cowrie
 
-# Switch to the cowrie user and set up Cowrie
+# Switch and set up to user cowrie
 echo "Setting up Cowrie environment..."
 sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie
 cd /home/cowrie/cowrie
@@ -37,8 +37,9 @@ source cowrie-env/bin/activate
 bin/cowrie start
 EOF
 
+# Redirect Port
 sudo su /bin/bash << 'EOF'
-cd
+cd /home/raspberry
 sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
 sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
 sudo touch /etc/authbind/byport/22
