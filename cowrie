@@ -1,6 +1,24 @@
  #!/bin/bash
 
-# Cowrie Installation and Running Script
+# Looping while system can't install part of honeypot script
+try_command() {
+    local cmd="$1"
+    local attempts=0
+    local max_attempts=3
+    local sleep_time=5
+
+    while ! eval "$cmd"; do
+        attempts=$((attempts + 1))
+        if [ $attempts -ge $max_attempts ]; then
+            echo "Gagal dalam $attempts kali percobaan: $cmd"
+            return 1
+        fi
+        echo "Percobaan ke-$attempts gagal: $cmd"
+        echo "Reboot $sleep_time detik..."
+        sleep $sleep_time
+    done
+}
+
 
 # Update & Install System
 echo "Updating system..."
@@ -10,23 +28,31 @@ sudo apt install authbind -y
 
 # Install dependencies
 echo "Installing dependencies..."
-sudo apt install -y git python3-venv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind
+try_command "sudo apt install -y git python3-venv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind"
 
 # Create user Cowrie
 echo "Creating cowrie user..."
-sudo adduser --disabled-password --gecos "" cowrie
+if id "cowrie" &>/dev/null; then
+    echo "User cowrie already exists. Deleting user..."
+    sudo deluser --remove-home cowrie
+fi
+try_command "sudo adduser --disabled-password --gecos "" cowrie"
 
 # Switch and set up to user cowrie
 echo "Setting up Cowrie environment..."
-sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie
+if [ -d "/home/cowrie/cowrie" ]; then
+    echo "Directory /home/cowrie/cowrie already exists. Deleting directory..."
+    sudo rm -rf /home/cowrie/cowrie
+fi
+try_command "sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie"
 cd /home/cowrie/cowrie
 
 # Create virtual environment and install dependencies
 sudo -u cowrie /bin/bash << 'EOF'
 python3 -m venv cowrie-env
 source cowrie-env/bin/activate
-python -m pip install --upgrade pip
-python -m pip install --upgrade -r requirements.txt
+try_command "python -m pip install --upgrade pip"
+try_command "python -m pip install --upgrade -r requirements.txt"
 cp etc/cowrie.cfg.dist etc/cowrie.cfg
 EOF
 
