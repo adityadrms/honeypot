@@ -36,7 +36,7 @@ if id "cowrie" &>/dev/null; then
     echo "User cowrie already exists. Deleting user..."
     sudo deluser --remove-home cowrie
 fi
-try_command "sudo adduser --disabled-password --gecos "" cowrie"
+try_command "sudo adduser --disabled-password --gecos \"\" cowrie"
 
 # Switch and set up to user cowrie
 echo "Setting up Cowrie environment..."
