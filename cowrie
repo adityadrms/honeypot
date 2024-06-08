@@ -45,41 +45,28 @@ if [ -d "/home/cowrie/cowrie" ]; then
     sudo rm -rf /home/cowrie/cowrie
 fi
 try_command "sudo -u cowrie git clone https://github.com/cowrie/cowrie /home/cowrie/cowrie"
-cd /home/cowrie/cowrie
 
 # Create virtual environment and install dependencies
-sudo -u cowrie /bin/bash << 'EOF'
-python3 -m venv cowrie-env
-source cowrie-env/bin/activate
-try_command "python -m pip install --upgrade pip"
-try_command "python -m pip install --upgrade -r requirements.txt"
-cp etc/cowrie.cfg.dist etc/cowrie.cfg
-EOF
+try_command "sudo -u cowrie /bin/bash -c 'cd /home/cowrie/cowrie && python3 -m venv cowrie-env && source cowrie-env/bin/activate && python -m pip install --upgrade pip && python -m pip install --upgrade -r requirements.txt && cp etc/cowrie.cfg.dist etc/cowrie.cfg'"
 
 # Start Cowrie
 echo "Starting Cowrie..."
-sudo -u cowrie /bin/bash << 'EOF'
-source cowrie-env/bin/activate
-bin/cowrie start
-EOF
+try_command "sudo -u cowrie /bin/bash -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && /home/cowrie/cowrie/bin/cowrie start'"
 
 # Redirect Port
-sudo su /bin/bash << 'EOF'
-cd /home/raspberry
-sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
-sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
-sudo touch /etc/authbind/byport/22
-sudo chown cowrie:cowrie /etc/authbind/byport/22
-sudo chmod 770 /etc/authbind/byport/22
-EOF
+if sudo iptables -t nat -L PREROUTING | grep -q 'REDIRECT.*tcp.*dpt:22'; then
+    echo "Port redirection for port 22 already exists. Deleting rule..."
+    sudo iptables -t nat -D PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
+fi
+if sudo iptables -t nat -L PREROUTING | grep -q 'REDIRECT.*tcp.*dpt:23'; then
+    echo "Port redirection for port 23 already exists. Deleting rule..."
+    sudo iptables -t nat -D PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
+fi
+try_command "sudo /bin/bash -c 'iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222 && iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223 && touch /etc/authbind/byport/22 && chown cowrie:cowrie /etc/authbind/byport/22 && chmod 770 /etc/authbind/byport/22'"
 
 # Open Log
 echo "Try to open Log..."
-sudo -u cowrie /bin/bash << 'EOF'
-source cowrie-env/bin/activate
-cd /home/cowrie/cowrie/var/log/cowrie
-tail -f cowrie.log
-EOF
+try_command "sudo -u cowrie /bin/bash -c 'source /home/cowrie/cowrie/cowrie-env/bin/activate && tail -f /home/cowrie/cowrie/var/log/cowrie/cowrie.log'"
 
 
 
